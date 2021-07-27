@@ -11,14 +11,14 @@ The goal is to implement 3 variants:
 > "I know, I'll use regular expressions."   Now they have two problems.
 >  - Jamie Zawinski / David Tilbrook (depending upon how far you read [this blog post](http://regex.info/blog/2006-09-15/247))
 
-Regulary expressions are interesting in their own right and a RE engine is not-too-hard-not-too-easy challenge. So, building one would be fun. 
+Regulary expressions are interesting in their own right and a RE engine is not-too-hard-not-too-easy challenge.  
 
 So why do this? For fun. 
 
 Not to study how regex works, there's better ways to learn regex. 
 But to learn, how to do more than just use regex.
 
-Trying to build the coolRE 3 - should be an interesting refresher in elementary Theory of Computation, Automata, Compilers.  
+Trying to build **the coolRE 3** - should be an interesting refresher in elementary Theory of Computation, Automata, Compilers.  
 
 
 ## What's in it for you?
