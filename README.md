@@ -7,8 +7,8 @@ The goal is to implement 3 variants:
 1. [And lastly one based on Finite Automata](https://github.com/shauryashaurya/coolRE/tree/main/finite-automata)
 
 ## Why?
-> Some people, when confronted with a problem, think
-> "I know, I'll use regular expressions."   Now they have two problems.
+> Some people, when confronted with a problem, think "I know, I'll use regular expressions."
+> Now they have two problems.
 >  
 >  \- Jamie Zawinski / David Tilbrook (depending upon how far you read [this blog post](http://regex.info/blog/2006-09-15/247))
 
