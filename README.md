@@ -2,9 +2,9 @@
 coolRE (cooler) is a set of regular expression engines implemented from scratch in Python.
 
 The goal is to implement 3 variants:
-* A toy engine for learning
-* One based on backtracking
-* And lastly one based on Finite Automata. 
+1. [A toy engine for learning](https://github.com/shauryashaurya/coolRE/tree/main/toy)
+1. [One based on backtracking](https://github.com/shauryashaurya/coolRE/tree/main/backtracking)
+1. [And lastly one based on Finite Automata](https://github.com/shauryashaurya/coolRE/tree/main/finite-automata)
 
 ## Why?
 > Some people, when confronted with a problem, think
