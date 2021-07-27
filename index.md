@@ -1,37 +1,47 @@
-## Welcome to GitHub Pages
+# coolRE Regular Expressions Engine
+coolRE (cooler) is a set of regular expression engines implemented from scratch in Python.
 
-You can use the [editor on GitHub](https://github.com/shauryashaurya/coolRE/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+The goal is to implement 3 variants:
+1. [A toy engine for learning](https://github.com/shauryashaurya/coolRE/tree/main/toy)
+1. [One based on backtracking](https://github.com/shauryashaurya/coolRE/tree/main/backtracking)
+1. [And lastly one based on Finite Automata](https://github.com/shauryashaurya/coolRE/tree/main/finite-automata)
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Why?
+> Some people, when confronted with a problem, think "I know, I'll use regular expressions."
+> 
+> Now they have two problems.
+>  
+>  \- Jamie Zawinski / David Tilbrook (depending upon how far you read [this blog post](http://regex.info/blog/2006-09-15/247))
 
-### Markdown
+Regulary expressions are interesting in their own right and a RE engine is not-too-hard-not-too-easy challenge.  
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+So why do this? For fun. 
 
-```markdown
-Syntax highlighted code block
+Not to study how regex works, there's better ways to learn regex. 
+But to learn, how to do more than just use regex.
 
-# Header 1
-## Header 2
-### Header 3
+Trying to build **the coolRE 3** - should be an interesting refresher in elementary Theory of Computation, Automata, Compilers.  
 
-- Bulleted
-- List
 
-1. Numbered
-2. List
+## What's in it for you?
+As an engineer, I suspect you'd get the same value from coolRE as me.
+Study the code or implement one of them on your own. 
 
-**Bold** and _Italic_ and `Code` text
 
-[Link](url) and ![Image](src)
-```
+## References
+What I'll use:
+* https://www.youtube.com/watch?v=fgp0tKWYQWY
+* https://www.regular-expressions.info/
+* https://github.com/python/cpython/blob/main/Lib/re.py
+* https://xysun.github.io/posts/regex-parsing-thompsons-algorithm.html
+* http://gsf.cococlyde.org/download
+* https://ia801907.us.archive.org/8/items/glenn_fowler_interpretation_of_posix_standard/glenn_fowler_interpretation_of_posix_standard.pdf
+* https://kean.blog/post/lets-build-regex and https://github.com/kean/Regex
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
 
-### Jekyll Themes
+---
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/shauryashaurya/coolRE/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+Big thank you to all those who've done this before, I learned loads, your work helps a lot!
 
-### Support or Contact
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+Cool! Here we go...
