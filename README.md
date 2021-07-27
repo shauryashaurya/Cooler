@@ -39,6 +39,9 @@ What I'll use:
 * https://kean.blog/post/lets-build-regex and https://github.com/kean/Regex
 
 
-Big thank you to all those who've done this before, your work helps a lot!
+---
+
+Big thank you to all those who've done this before, I learned loads, your work helps a lot!
+
 
 Cool! Here we go...
