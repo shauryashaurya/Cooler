@@ -9,6 +9,7 @@ The goal is to implement 3 variants:
 ## Why?
 > Some people, when confronted with a problem, think
 > "I know, I'll use regular expressions."   Now they have two problems.
+>  
 >  '- Jamie Zawinski / David Tilbrook (depending upon how far you read [this blog post](http://regex.info/blog/2006-09-15/247))
 
 Regulary expressions are interesting in their own right and a RE engine is not-too-hard-not-too-easy challenge.  
