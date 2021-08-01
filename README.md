@@ -40,7 +40,7 @@ What I'll use:
 * https://kean.blog/post/lets-build-regex and https://github.com/kean/Regex
 * Regular Expressions specs (holy cow!):
   * [PCRE](https://www.pcre.org/current/doc/html/pcre2pattern.html)
-  *[ECMAScript 2022 aka JavaScript](https://tc39.es/ecma262/#sec-regexp-regular-expression-objects)
+  * [ECMAScript 2022 aka JavaScript](https://tc39.es/ecma262/#sec-regexp-regular-expression-objects)
 
 
 
