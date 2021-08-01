@@ -38,7 +38,9 @@ What I'll use:
 * http://gsf.cococlyde.org/download
 * https://ia801907.us.archive.org/8/items/glenn_fowler_interpretation_of_posix_standard/glenn_fowler_interpretation_of_posix_standard.pdf
 * https://kean.blog/post/lets-build-regex and https://github.com/kean/Regex
-* Regular Expressions specs (holy cow!): [PCRE](https://www.pcre.org/current/doc/html/pcre2pattern.html) and (Javascript / ECMAScript 2022 standard)[https://tc39.es/ecma262/#sec-regexp-regular-expression-objects]
+* Regular Expressions specs (holy cow!):
+** [PCRE](https://www.pcre.org/current/doc/html/pcre2pattern.html)
+** (ECMAScript 2022 aka JavaScript )[https://tc39.es/ecma262/#sec-regexp-regular-expression-objects]
 
 
 
