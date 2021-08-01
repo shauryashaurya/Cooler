@@ -11,3 +11,7 @@ A sort of straight forward approach:
 1. Evaluate the tree 
 
 Yeah. I know.
+
+Reference:
+* [Backtracking on Wikipedia](https://en.wikipedia.org/wiki/Backtracking)
+
