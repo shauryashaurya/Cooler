@@ -27,6 +27,7 @@ Trying to build **the coolRE 3** - should be an interesting refresher in element
 As an engineer, I suspect you'd get the same value from coolRE as me.
 Study the code or implement one of them on your own. 
 
+I don't plan to make any of these implementations _comprehensive_ - meaning implementing every line and edge case of the specifications (listed in references below) but the main parts I build will conform to the specs. 
 
 ## References
 What I'll use:
@@ -37,6 +38,8 @@ What I'll use:
 * http://gsf.cococlyde.org/download
 * https://ia801907.us.archive.org/8/items/glenn_fowler_interpretation_of_posix_standard/glenn_fowler_interpretation_of_posix_standard.pdf
 * https://kean.blog/post/lets-build-regex and https://github.com/kean/Regex
+* Regular Expressions specs (holy cow!): [PCRE](https://www.pcre.org/current/doc/html/pcre2pattern.html) and (Javascript / ECMAScript 2022 standard)[https://tc39.es/ecma262/#sec-regexp-regular-expression-objects]
+
 
 
 ---
