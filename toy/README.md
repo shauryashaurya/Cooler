@@ -1,4 +1,4 @@
-# coolRE - toy implementation.
+# CooleRE - toy implementation.
 
 A regular expressions engine written in Python.
 This variant uses a naive approach eventually.
