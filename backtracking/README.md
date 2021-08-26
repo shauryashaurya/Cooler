@@ -12,6 +12,7 @@ A sort of straight forward approach:
 
 Yeah. I know.
 
-Reference:
+References:
 * [Backtracking on Wikipedia](https://en.wikipedia.org/wiki/Backtracking)
+* [A general page on Parsers on Wikipedia](https://en.wikipedia.org/wiki/Parsing#Types_of_parsers)
 

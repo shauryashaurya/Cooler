@@ -33,12 +33,13 @@ I don't plan to make any of these implementations _comprehensive_ - meaning impl
 What I'll use:
 * https://www.youtube.com/watch?v=fgp0tKWYQWY
 * https://www.regular-expressions.info/
+* [The Crenshaw Tutorial](https://compilers.iecc.com/crenshaw/)
 * https://github.com/python/cpython/blob/main/Lib/re.py
 * https://xysun.github.io/posts/regex-parsing-thompsons-algorithm.html
 * http://gsf.cococlyde.org/download
 * https://ia801907.us.archive.org/8/items/glenn_fowler_interpretation_of_posix_standard/glenn_fowler_interpretation_of_posix_standard.pdf
 * https://kean.blog/post/lets-build-regex and https://github.com/kean/Regex
-* Regular Expressions specs (holy cow!):
+* Regular Expressions specs (I don't know how much I'll use these, but, just in case...):
   * [PCRE](https://www.pcre.org/current/doc/html/pcre2pattern.html)
   * [ECMAScript 2022 aka JavaScript](https://tc39.es/ecma262/#sec-regexp-regular-expression-objects)
 
