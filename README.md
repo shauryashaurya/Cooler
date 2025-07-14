@@ -1,4 +1,4 @@
-# CooleRE Regular Expressions Engine
+# The Cooler Regular Expressions Engine
 CooleRE (cooler) is a set of regular expression engines implemented from scratch in Python.
 
 The goal is to implement 3 variants:
