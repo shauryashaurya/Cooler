@@ -1,0 +1,19 @@
+{
+  "id": "2343083346640",
+  "type": "Alternation",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083273104",
+      "type": "Literal",
+      "repr": "a",
+      "children": []
+    },
+    {
+      "id": "2343083344976",
+      "type": "Literal",
+      "repr": "b",
+      "children": []
+    }
+  ]
+}

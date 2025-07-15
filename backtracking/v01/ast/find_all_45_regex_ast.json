@@ -1,0 +1,25 @@
+{
+  "id": "2343083274640",
+  "type": "Sequence",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083354768",
+      "type": "Literal",
+      "repr": ".",
+      "children": []
+    },
+    {
+      "id": "2343083359696",
+      "type": "Literal",
+      "repr": ".",
+      "children": []
+    },
+    {
+      "id": "2343083277904",
+      "type": "Literal",
+      "repr": ".",
+      "children": []
+    }
+  ]
+}

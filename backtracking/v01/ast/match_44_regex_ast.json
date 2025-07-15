@@ -1,0 +1,59 @@
+{
+  "id": "2343083405136",
+  "type": "Sequence",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083403600",
+      "type": "Star",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083393936",
+          "type": "Alternation",
+          "repr": null,
+          "children": [
+            {
+              "id": "2343083393616",
+              "type": "Literal",
+              "repr": "x",
+              "children": []
+            },
+            {
+              "id": "2343083397584",
+              "type": "Literal",
+              "repr": "y",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2343083404176",
+      "type": "Question",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083403792",
+          "type": "Alternation",
+          "repr": null,
+          "children": [
+            {
+              "id": "2343083404112",
+              "type": "Literal",
+              "repr": "z",
+              "children": []
+            },
+            {
+              "id": "2343083404944",
+              "type": "Literal",
+              "repr": "w",
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

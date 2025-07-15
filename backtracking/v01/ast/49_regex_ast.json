@@ -1,0 +1,60 @@
+{
+  "id": "2298321841296",
+  "type": "Sequence",
+  "repr": null,
+  "children": [
+    {
+      "id": "2298321843472",
+      "type": "Question",
+      "repr": null,
+      "children": [
+        {
+          "id": "2298321840016",
+          "type": "CharClass",
+          "repr": {
+            "chars": [
+              "b",
+              "c",
+              "a"
+            ],
+            "negated": false
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "2298321841168",
+      "type": "Star",
+      "repr": null,
+      "children": [
+        {
+          "id": "2298321844432",
+          "type": "CharClass",
+          "repr": {
+            "chars": [
+              "e",
+              "d",
+              "f"
+            ],
+            "negated": false
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "2298321845648",
+      "type": "Plus",
+      "repr": null,
+      "children": [
+        {
+          "id": "2298321838736",
+          "type": "Literal",
+          "repr": "g",
+          "children": []
+        }
+      ]
+    }
+  ]
+}

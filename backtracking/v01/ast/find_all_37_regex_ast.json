@@ -1,0 +1,19 @@
+{
+  "id": "2343083460624",
+  "type": "Plus",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083474576",
+      "type": "CharClass",
+      "repr": {
+        "chars": [
+          "w",
+          "s"
+        ],
+        "negated": true
+      },
+      "children": []
+    }
+  ]
+}

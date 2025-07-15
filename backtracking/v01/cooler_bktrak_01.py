@@ -301,20 +301,47 @@ class RegexParser:
         return Sequence(nodes)
 
     ##
+    # def parse_factor(self):
+    #     # A factor is an atom plus an optional quantifier.
+    #     node = self.parse_atom()
+    #     if self.pos < len(self.pattern):
+    #         char = self.pattern[self.pos]
+    #         if char == '*':
+    #             self.pos += 1
+    #             return Star(node)
+    #         elif char == '+':
+    #             self.pos += 1
+    #             return Plus(node)
+    #         elif char == '?':
+    #             self.pos += 1
+    #             return Question(node)
+    #     return node
+
+    ##
     def parse_factor(self):
-        # A factor is an atom plus an optional quantifier.
+        # upgraded version - accounts for lazy parsing as well
+        # Parse an atom, then an optional quantifier (*, +, ?) with
+        # optional lazy-modifier '?' (i.e. *?, +?, ??).
+
         node = self.parse_atom()
+
         if self.pos < len(self.pattern):
-            char = self.pattern[self.pos]
-            if char == '*':
+            op = self.pattern[self.pos]
+            if op in "*+?":
                 self.pos += 1
-                return Star(node)
-            elif char == '+':
-                self.pos += 1
-                return Plus(node)
-            elif char == '?':
-                self.pos += 1
-                return Question(node)
+                # detect lazy modifier
+                is_lazy = False
+                if self.pos < len(self.pattern) and self.pattern[self.pos] == '?':
+                    is_lazy = True
+                    self.pos += 1
+
+                if op == '*':
+                    return LazyStar(node) if is_lazy else Star(node)
+                elif op == '+':
+                    return LazyPlus(node) if is_lazy else Plus(node)
+                else:  # op == '?'
+                    return LazyQuestion(node) if is_lazy else Question(node)
+
         return node
 
     ##
@@ -466,7 +493,7 @@ class BacktrackingRegex:
                 return (start_pos, end_pos)  # Return the first success.
         return None
 
-    def findall(self, text):
+    def find_all(self, text):
         # Finds all non-overlapping matches.
         matches = []
         pos = 0
@@ -604,24 +631,24 @@ if __name__ == "__main__":
     print("--- Running Full Match Tests ---")
     counter = 0
 
-    # for pattern, text, expected in tests:
-    #     regex = BacktrackingRegex(pattern)
+    for pattern, text, expected in tests:
+        regex = BacktrackingRegex(pattern)
 
-    #     counter += 1
-    #     # Dump the AST out to JSON:
-    #     persist_ast(regex.ast, "./ast/match_"+str(counter)+"_regex_ast.json")
+        counter += 1
+        # Dump the AST out to JSON:
+        persist_ast(regex.ast, "./ast/match_"+str(counter)+"_regex_ast.json")
 
-    #     result = regex.match(text)
-    #     status = 'PASSED' if result == expected else 'FAILED'
+        result = regex.match(text)
+        status = 'PASSED' if result == expected else 'FAILED'
 
-    #     print(
-    #         f"Pattern: {pattern:<8} Text: {text:<8} Expected: {str(expected):<5} Got: {str(result):<5} {status}")
+        print(
+            f"Pattern: {pattern:<8} Text: {text:<8} Expected: {str(expected):<5} Got: {str(result):<5} {status}")
 
-    #     # Render a PNG (or SVG) of the AST:
-    #     png_path = visualize_ast(
-    #         regex.ast, output_path="./ast/match_"+str(counter)+"regex_ast_diagram")
+        # Render a PNG (or SVG) of the AST:
+        png_path = visualize_ast(
+            regex.ast, output_path="./ast/match_"+str(counter)+"regex_ast_diagram")
 
-    # print("\n--- Running Search and Findall Tests ---")
+    print("\n--- Running Search and Findall Tests ---")
 
     # ---------Search and Find All ------------
     # # Search finds the first occurrence. 'a+b' will find 'aaab'.
@@ -707,6 +734,47 @@ if __name__ == "__main__":
         (r"\d{1,2}:\d{2}", "Time 09:45", True),
         (r"\d{1,2}:\d{2}", "At 7:5", False),
         (r"([01]?\d|2[0-3]):[0-5]\d", "23:59", True),
+        # non-capturing alternation matches multiple foo/bar
+        (r"(?:foo|bar)", "foofoobarbarbarbar", True),
+        (r"(?:foo|bar)", "bazqux", False),  # no foo or bar present
+        # foo only if followed by bar (lookahead)
+        (r"foo(?=bar)", "foobar", True),
+        (r"foo(?=bar)", "foobaz", False),  # foo not followed by bar
+        # foo only if not followed by bar (neg lookahead)
+        (r"foo(?!bar)", "foobaz", True),
+        (r"foo(?!bar)", "foobar", False),  # foo followed by bar gets rejected
+        # def only if preceded by abc (lookbehind)
+        (r"(?<=abc)def", "abcdef", True),
+        (r"(?<=abc)def", "zabcdef", False),  # def preceded by zab, not abc
+        # def only if not preceded by abc (neg lookbehind)
+        (r"(?<!abc)def", "zdef", True),
+        (r"(?<!abc)def", "abcdef", False),  # def preceded by abc is rejected
+        # full-string non-cap group with + quantifier
+        (r"^(?:a|b)+$", "abab", True),
+        (r"^(?:a|b)+$", "abc", False),  # extra c breaks full-string match
+        (r"(?<=a)b", "ab", True),  # b preceded by a
+        (r"(?<=a)b", "cb", False),  # b preceded by c
+        (r"(?<!a)b", "xb", True),  # b not preceded by a
+        (r"(?<!a)b", "ab", False),  # b preceded by a is rejected
+        # foo→bar→baz sequence via lookahead
+        (r"foo(?=bar)baz", "foobarbaz", True),
+        (r"foo(?=bar)baz", "foobazbaz", False),  # missing bar in between
+        (r"(?<=foo)bar", "foobar", True),  # bar preceded by foo
+        (r"(?<=foo)bar", "bar", False),  # bar at start not preceded by foo
+        (r"(?<!foo)bar", "xbar", True),  # bar not preceded by foo
+        (r"(?<!foo)bar", "foobar", False),  # bar preceded by foo rejected
+        # non-cap group with word boundaries
+        (r"\b(?:cat|dog)\b", "the cat sat", True),
+        (r"\b(?:cat|dog)\b", "catalog", False),  # appears inside word, no match
+        # digits between word boundaries
+        (r"(?<=\b)\d+(?=\b)", "room 1234 end", True),
+        (r"(?<=\b)\d+(?=\b)", "room1234end", False),  # digits part of larger word
+        # exactly two digits not part of larger number
+        (r"(?<!\d)\d{2}(?!\d)", "ab12cd 345", True),
+        # runs of 4 digits fail two-digit constraint
+        (r"(?<!\d)\d{2}(?!\d)", "1234", False),
+        (r"(?:ab){2,3}", "abab", True),  # non-cap group repeated 2 times
+        (r"(?:ab){2,3}", "ababab", True),  # repeated 3 times
     ]
 
     counter = 0
@@ -738,10 +806,10 @@ if __name__ == "__main__":
     # Findall finds all non-overlapping occurrences.
     regex_findall = BacktrackingRegex("a+")
     print(
-        f"Find all 'a+' in 'aabaaacaa': {regex_findall.findall('aabaaacaa')}")
+        f"Find all 'a+' in 'aabaaacaa': {regex_findall.find_all('aabaaacaa')}")
     # This tests the zero-length match edge case. 'z*' can match an empty string
     # at every position. The `max(pos + 1, ...)` logic ensures we advance.
-    print(f"Find all 'z*' in 'abc': {regex_findall.findall('abc')}")
+    print(f"Find all 'z*' in 'abc': {regex_findall.find_all('abc')}")
 
     # --- FIND_ALL TESTS ---
     FINDALL_TESTS = [
@@ -835,20 +903,81 @@ if __name__ == "__main__":
         (r"\b(?=\w{4}\b)\w+\b", "four five six seven", 1),
         (r"\b(?<=\w{4}\b)\w+\b", "four five six seven", 1),
         (r"(?<=un)happy", "unhappy happy", 1),
+        # find all occurrences of foo/bar
+        (r"(?:foo|bar)", "foofoobarbarbar", 4),
+        # foo only when followed by bar
+        (r"foo(?=bar)", "foobar foofoobarbar foo", 3),
+        # foo only when not followed by bar
+        (r"foo(?!bar)", "foobaz fooqux foobar", 2),
+        (r"(?<=foo)bar", "foobar foo barfoobar", 2),  # bar preceded by foo
+        (r"(?<!foo)bar", "bar foo barbar", 2),  # bar not preceded by foo
+        (r"(?<=\d)\D", "1a2b3c", 3),  # non-digit chars preceded by digit
+        (r"(?=\d)", "a1b2c3", 3),  # positions before digits
+        (r"\b(?:a|b)c\b", "ac bc dc ac bc", 4),  # ac or bc as whole words
+        (r"(?<=\s)\w+", " one two three ", 3),  # words preceded by whitespace
+        (r"\w+(?=\.)", "Mr. Smith. Dr. Who.", 3),  # words followed by period
+        # stand-alone word not touching dots
+        (r"(?<!\.)\w+(?<!\.)", "hello.world test...", 1),
+        # sequences of 'ha' repeated twice+
+        (r"(?:ha){2,}", "hahaha haha hah", 2),
+        (r"(?<=un)matched", "unmatched unmatched", 2),  # matched preceded by 'un'
+        # matched not preceded by 'un'
+        (r"(?<!un)matched", "unmatched unmatched", 1),
+        (r"(?<=\b)\w{3}\b", "one two three four", 3),  # exactly 3-letter words
+        # ensure word boundary before
+        (r"(?<!\b)\w{3}\b", "one two three four", 0),
+        # optional 'u' in non-cap group
+        (r"(?:colou?r)", "color colour colouur color", 3),
+        # positions before 5-letter word
+        (r"(?=\b\w{5}\b)", "hello world there", 1),
+        # positions after 5-letter word
+        (r"(?<=\b\w{5}\b)", "hello world there", 1),
+        # exactly 4-letter words
+        (r"(?<!\w)\w{4}(?!\w)", "test code hard here", 3),
+        # standalone 2-digit numbers
+        (r"(?<=\b)\d{2}(?=\b)", "12 3456 78 9 01", 3),
+        # numbers surrounded by non-digits
+        (r"(?<=\D)\d+(?=\D)", "a123b456c7", 2),
+        # numbers not part of larger numeric run
+        (r"(?<!\d)\d+(?!\d)", "a123b456c7", 2),
+        # dog/cat as whole words
+        (r"(?<=\b)(?:dog|cat)(?=\b)", "dog cat pig dog", 3),
+        (r"(?<=\b)(?!pig)\w+\b", "dog pig cat", 2),  # words not equal 'pig'
+        (r"(?<=a)b+(?=c)", "abbbc abc", 2),  # runs of b between a and c
+        (r"(?<!a)b+(?!c)", "bb bc bb", 1),  # runs of b not surrounded by a/c
+        (r"(?:ab){2}", "abab ab ababab", 2),  # exactly two 'ab' repeats
+        (r"(?=ab)", "ababab", 3),  # positions before 'ab'
+        (r"(?<=ab)", "ababab", 3),  # positions after 'ab'
+        (r"(?:a|b)+c", "aababc", 1),  # non-cap group + final c
+        (r"(?<=a)b+c", "abbbc abc", 1),  # runs of b after a before c
+        (r"(?<!x)x+y", "xxy yy xyy", 2),  # runs of x not preceded by x
+        (r"(?:x|y){1,3}", "xyx yyy xxxx", 3),  # up to 3 repeats only
+        (r"(?<=\.)\w+", "end. start middle.", 2),  # words after period
+        (r"(?<!\.)\w+", "end. start middle.", 2),  # words not after period
+        # 4-letter words only
+        (r"\b(?=\w{4}\b)\w+\b", "four five six seven", 1),
+        # same using lookbehind
+        (r"\b(?<=\w{4}\b)\w+\b", "four five six seven", 1),
+        (r"(?<=un)happy", "unhappy happy", 1),  # happy preceded by un only
     ]
 
+    counter = 0
     for pattern, text, expected_count in FINDALL_TESTS:
+
+        counter += 1
+
         print(f"[FIND_ALL] {pattern!r} in {text!r} → expect {expected_count}")
         regex = BacktrackingRegex(pattern)
 
         # build & snapshot AST
-        ast = build_ast(pattern)
-        persist_ast(ast, f"findall_ast_{pattern}.json")
-        visualize_ast(ast, output_path=f"findall_ast_{pattern}")
+        ast = regex.ast
+        persist_ast(ast, "./ast/find_all_"+str(counter)+"_regex_ast.json")
+        visualize_ast(ast, output_path="./ast/find_all_" +
+                      str(counter) + "_regex_ast")
 
         # # trace & run find_all()
         # tracer = ASTTracer(); tracer.instrument(ast)
-        # all_matches = regex.find_all(text)
+        all_matches = regex.find_all(text)
         # tracer.restore()
 
         print("  → found:", len(all_matches), "| PASS" if len(

@@ -1,0 +1,33 @@
+{
+  "id": "2343083351568",
+  "type": "Plus",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083358352",
+      "type": "Alternation",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083355664",
+          "type": "CharClass",
+          "repr": {
+            "chars": [
+              "c",
+              "b",
+              "a"
+            ],
+            "negated": false
+          },
+          "children": []
+        },
+        {
+          "id": "2343083350672",
+          "type": "Literal",
+          "repr": "d",
+          "children": []
+        }
+      ]
+    }
+  ]
+}

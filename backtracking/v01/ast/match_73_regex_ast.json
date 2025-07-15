@@ -1,0 +1,112 @@
+{
+  "id": "2343083404112",
+  "type": "Sequence",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083265552",
+      "type": "Star",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083267216",
+          "type": "Dot",
+          "repr": null,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "2343083267472",
+      "type": "Literal",
+      "repr": "d",
+      "children": []
+    },
+    {
+      "id": "2343083275792",
+      "type": "Literal",
+      "repr": "e",
+      "children": []
+    },
+    {
+      "id": "2343083406224",
+      "type": "Literal",
+      "repr": "a",
+      "children": []
+    },
+    {
+      "id": "2343083400208",
+      "type": "Literal",
+      "repr": "d",
+      "children": []
+    },
+    {
+      "id": "2343083403216",
+      "type": "Star",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083406416",
+          "type": "Dot",
+          "repr": null,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "2343083404752",
+      "type": "Literal",
+      "repr": "r",
+      "children": []
+    },
+    {
+      "id": "2343083407248",
+      "type": "Literal",
+      "repr": "i",
+      "children": []
+    },
+    {
+      "id": "2343083401168",
+      "type": "Literal",
+      "repr": "p",
+      "children": []
+    },
+    {
+      "id": "2343083407888",
+      "type": "Literal",
+      "repr": "p",
+      "children": []
+    },
+    {
+      "id": "2343083405072",
+      "type": "Literal",
+      "repr": "l",
+      "children": []
+    },
+    {
+      "id": "2343083394384",
+      "type": "Literal",
+      "repr": "e",
+      "children": []
+    },
+    {
+      "id": "2343083400144",
+      "type": "Literal",
+      "repr": "s",
+      "children": []
+    },
+    {
+      "id": "2343083404304",
+      "type": "Star",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083404560",
+          "type": "Dot",
+          "repr": null,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

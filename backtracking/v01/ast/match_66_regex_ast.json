@@ -1,0 +1,75 @@
+{
+  "id": "2343083413200",
+  "type": "Sequence",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083344336",
+      "type": "Star",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083271568",
+          "type": "Dot",
+          "repr": null,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "2343083346128",
+      "type": "Literal",
+      "repr": "t",
+      "children": []
+    },
+    {
+      "id": "2343083347536",
+      "type": "Literal",
+      "repr": "o",
+      "children": []
+    },
+    {
+      "id": "2343083349072",
+      "type": "Literal",
+      "repr": "o",
+      "children": []
+    },
+    {
+      "id": "2343083412432",
+      "type": "Literal",
+      "repr": "l",
+      "children": []
+    },
+    {
+      "id": "2343083416528",
+      "type": "Literal",
+      "repr": "b",
+      "children": []
+    },
+    {
+      "id": "2343083416720",
+      "type": "Literal",
+      "repr": "o",
+      "children": []
+    },
+    {
+      "id": "2343083417168",
+      "type": "Literal",
+      "repr": "x",
+      "children": []
+    },
+    {
+      "id": "2343083417040",
+      "type": "Star",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083417296",
+          "type": "Dot",
+          "repr": null,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

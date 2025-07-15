@@ -1,0 +1,110 @@
+{
+  "id": "2343083473552",
+  "type": "Sequence",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083462992",
+      "type": "Plus",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083399760",
+          "type": "CharClass",
+          "repr": {
+            "chars": [
+              "Z",
+              "9",
+              "-",
+              "z",
+              "A",
+              "a",
+              "0"
+            ],
+            "negated": false
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "2343083460048",
+      "type": "Literal",
+      "repr": "@",
+      "children": []
+    },
+    {
+      "id": "2343083463888",
+      "type": "Plus",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083460816",
+          "type": "CharClass",
+          "repr": {
+            "chars": [
+              "Z",
+              "-",
+              "z",
+              "A",
+              "a"
+            ],
+            "negated": false
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "2343083473936",
+      "type": "Literal",
+      "repr": ".",
+      "children": []
+    },
+    {
+      "id": "2343083465616",
+      "type": "CharClass",
+      "repr": {
+        "chars": [
+          "Z",
+          "-",
+          "z",
+          "A",
+          "a"
+        ],
+        "negated": false
+      },
+      "children": []
+    },
+    {
+      "id": "2343083473616",
+      "type": "Literal",
+      "repr": "{",
+      "children": []
+    },
+    {
+      "id": "2343083474512",
+      "type": "Literal",
+      "repr": "2",
+      "children": []
+    },
+    {
+      "id": "2343083474576",
+      "type": "Literal",
+      "repr": ",",
+      "children": []
+    },
+    {
+      "id": "2343083474448",
+      "type": "Literal",
+      "repr": "4",
+      "children": []
+    },
+    {
+      "id": "2343083466192",
+      "type": "Literal",
+      "repr": "}",
+      "children": []
+    }
+  ]
+}

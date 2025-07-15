@@ -1,0 +1,38 @@
+{
+  "id": "2343083397904",
+  "type": "Sequence",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083359632",
+      "type": "CharClass",
+      "repr": {
+        "chars": [
+          "b",
+          "a"
+        ],
+        "negated": false
+      },
+      "children": []
+    },
+    {
+      "id": "2343083398224",
+      "type": "Star",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083354512",
+          "type": "CharClass",
+          "repr": {
+            "chars": [
+              "c",
+              "d"
+            ],
+            "negated": false
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
+}

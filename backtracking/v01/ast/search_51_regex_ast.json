@@ -1,0 +1,97 @@
+{
+  "id": "2343083424720",
+  "type": "Sequence",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083422672",
+      "type": "Alternation",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343082220816",
+          "type": "Sequence",
+          "repr": null,
+          "children": [
+            {
+              "id": "2343083228176",
+              "type": "Question",
+              "repr": null,
+              "children": [
+                {
+                  "id": "2343083228304",
+                  "type": "CharClass",
+                  "repr": {
+                    "chars": [
+                      "1",
+                      "0"
+                    ],
+                    "negated": false
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "2343082223184",
+              "type": "Literal",
+              "repr": "d",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "2343083420240",
+          "type": "Sequence",
+          "repr": null,
+          "children": [
+            {
+              "id": "2343082366608",
+              "type": "Literal",
+              "repr": "2",
+              "children": []
+            },
+            {
+              "id": "2343083413008",
+              "type": "CharClass",
+              "repr": {
+                "chars": [
+                  "-",
+                  "3",
+                  "0"
+                ],
+                "negated": false
+              },
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2343083417360",
+      "type": "Literal",
+      "repr": ":",
+      "children": []
+    },
+    {
+      "id": "2343083422800",
+      "type": "CharClass",
+      "repr": {
+        "chars": [
+          "5",
+          "-",
+          "0"
+        ],
+        "negated": false
+      },
+      "children": []
+    },
+    {
+      "id": "2343083413328",
+      "type": "Literal",
+      "repr": "d",
+      "children": []
+    }
+  ]
+}

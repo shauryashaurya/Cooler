@@ -1,0 +1,32 @@
+{
+  "id": "2343083274256",
+  "type": "Sequence",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083470416",
+      "type": "Lookbehind",
+      "repr": null,
+      "children": []
+    },
+    {
+      "id": "2343083393616",
+      "type": "Plus",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083358032",
+          "type": "Literal",
+          "repr": "d",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "2343083395792",
+      "type": "Lookahead",
+      "repr": null,
+      "children": []
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "id": "2343083262480",
+  "type": "Star",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083268176",
+      "type": "Literal",
+      "repr": "a",
+      "children": []
+    }
+  ]
+}

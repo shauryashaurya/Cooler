@@ -1,0 +1,96 @@
+{
+  "id": "2343083411152",
+  "type": "Sequence",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083359248",
+      "type": "Star",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083399632",
+          "type": "Dot",
+          "repr": null,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "2343083269840",
+      "type": "Alternation",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083270992",
+          "type": "Sequence",
+          "repr": null,
+          "children": [
+            {
+              "id": "2343083344336",
+              "type": "Literal",
+              "repr": "d",
+              "children": []
+            },
+            {
+              "id": "2343083271312",
+              "type": "Literal",
+              "repr": "e",
+              "children": []
+            },
+            {
+              "id": "2343083271184",
+              "type": "Literal",
+              "repr": "a",
+              "children": []
+            },
+            {
+              "id": "2343083267472",
+              "type": "Literal",
+              "repr": "d",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "2343083275088",
+          "type": "Sequence",
+          "repr": null,
+          "children": [
+            {
+              "id": "2343083266576",
+              "type": "Literal",
+              "repr": "d",
+              "children": []
+            },
+            {
+              "id": "2343083262544",
+              "type": "Literal",
+              "repr": "i",
+              "children": []
+            },
+            {
+              "id": "2343083273488",
+              "type": "Literal",
+              "repr": "e",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2343083410192",
+      "type": "Star",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083272976",
+          "type": "Dot",
+          "repr": null,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "id": "2298321963280",
+  "type": "Sequence",
+  "repr": null,
+  "children": [
+    {
+      "id": "2298321964560",
+      "type": "Plus",
+      "repr": null,
+      "children": [
+        {
+          "id": "2298321968656",
+          "type": "CharClass",
+          "repr": {
+            "chars": [
+              "0",
+              "1"
+            ],
+            "negated": false
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "2298321962704",
+      "type": "Question",
+      "repr": null,
+      "children": [
+        {
+          "id": "2298321975248",
+          "type": "Literal",
+          "repr": "1",
+          "children": []
+        }
+      ]
+    }
+  ]
+}

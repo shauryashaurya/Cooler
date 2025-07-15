@@ -1,0 +1,13 @@
+{
+  "id": "2298321910992",
+  "type": "CharClass",
+  "repr": {
+    "chars": [
+      "b",
+      "c",
+      "a"
+    ],
+    "negated": true
+  },
+  "children": []
+}

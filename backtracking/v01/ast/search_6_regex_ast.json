@@ -1,0 +1,57 @@
+{
+  "id": "2343083413456",
+  "type": "Alternation",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083414160",
+      "type": "Sequence",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083418768",
+          "type": "Literal",
+          "repr": "f",
+          "children": []
+        },
+        {
+          "id": "2343083417424",
+          "type": "Literal",
+          "repr": "o",
+          "children": []
+        },
+        {
+          "id": "2343083419984",
+          "type": "Literal",
+          "repr": "o",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "2343083418064",
+      "type": "Sequence",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083412432",
+          "type": "Literal",
+          "repr": "b",
+          "children": []
+        },
+        {
+          "id": "2343083415248",
+          "type": "Literal",
+          "repr": "a",
+          "children": []
+        },
+        {
+          "id": "2343083414992",
+          "type": "Literal",
+          "repr": "r",
+          "children": []
+        }
+      ]
+    }
+  ]
+}

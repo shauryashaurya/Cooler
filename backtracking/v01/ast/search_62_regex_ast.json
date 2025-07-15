@@ -1,0 +1,77 @@
+{
+  "id": "2343083461776",
+  "type": "Sequence",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083470160",
+      "type": "Alternation",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083469776",
+          "type": "Sequence",
+          "repr": null,
+          "children": [
+            {
+              "id": "2343083404112",
+              "type": "Literal",
+              "repr": "d",
+              "children": []
+            },
+            {
+              "id": "2343083406736",
+              "type": "Literal",
+              "repr": "o",
+              "children": []
+            },
+            {
+              "id": "2343083467472",
+              "type": "Literal",
+              "repr": "g",
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "2343083460368",
+          "type": "Sequence",
+          "repr": null,
+          "children": [
+            {
+              "id": "2343083462352",
+              "type": "Literal",
+              "repr": "c",
+              "children": []
+            },
+            {
+              "id": "2343083471312",
+              "type": "Literal",
+              "repr": "a",
+              "children": []
+            },
+            {
+              "id": "2343083462032",
+              "type": "Literal",
+              "repr": "t",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2343083466704",
+      "type": "Question",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083471120",
+          "type": "Literal",
+          "repr": "s",
+          "children": []
+        }
+      ]
+    }
+  ]
+}

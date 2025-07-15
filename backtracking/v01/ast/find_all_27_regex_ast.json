@@ -1,0 +1,78 @@
+{
+  "id": "2343083471696",
+  "type": "Sequence",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083461328",
+      "type": "Literal",
+      "repr": "b",
+      "children": []
+    },
+    {
+      "id": "2343083474832",
+      "type": "Star",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083470032",
+          "type": "Literal",
+          "repr": "w",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "2343083461904",
+      "type": "CharClass",
+      "repr": {
+        "chars": [
+          "i",
+          "e",
+          "a",
+          "u",
+          "o"
+        ],
+        "negated": false
+      },
+      "children": []
+    },
+    {
+      "id": "2343083358544",
+      "type": "Literal",
+      "repr": "{",
+      "children": []
+    },
+    {
+      "id": "2343083465744",
+      "type": "Literal",
+      "repr": "2",
+      "children": []
+    },
+    {
+      "id": "2343083470352",
+      "type": "Literal",
+      "repr": "}",
+      "children": []
+    },
+    {
+      "id": "2343083465872",
+      "type": "Star",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083460624",
+          "type": "Literal",
+          "repr": "w",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "2343083462544",
+      "type": "Literal",
+      "repr": "b",
+      "children": []
+    }
+  ]
+}

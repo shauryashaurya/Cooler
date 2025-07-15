@@ -1,0 +1,73 @@
+{
+  "id": "2343083415824",
+  "type": "Sequence",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083413648",
+      "type": "Star",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083344720",
+          "type": "Dot",
+          "repr": null,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "2343083412368",
+      "type": "Plus",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083413904",
+          "type": "CharClass",
+          "repr": {
+            "chars": [
+              "Z",
+              "-",
+              "z",
+              "A",
+              "a"
+            ],
+            "negated": false
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "2343083413712",
+      "type": "Literal",
+      "repr": "i",
+      "children": []
+    },
+    {
+      "id": "2343083414928",
+      "type": "Literal",
+      "repr": "n",
+      "children": []
+    },
+    {
+      "id": "2343083417424",
+      "type": "Literal",
+      "repr": "g",
+      "children": []
+    },
+    {
+      "id": "2343083415952",
+      "type": "Star",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083417552",
+          "type": "Dot",
+          "repr": null,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

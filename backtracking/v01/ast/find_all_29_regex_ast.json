@@ -1,0 +1,40 @@
+{
+  "id": "2343083424528",
+  "type": "Sequence",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343068523984",
+      "type": "CharClass",
+      "repr": {
+        "chars": [
+          "Z",
+          "-",
+          "A"
+        ],
+        "negated": false
+      },
+      "children": []
+    },
+    {
+      "id": "2343083359184",
+      "type": "Plus",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083358544",
+          "type": "CharClass",
+          "repr": {
+            "chars": [
+              "-",
+              "z",
+              "a"
+            ],
+            "negated": false
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
+}

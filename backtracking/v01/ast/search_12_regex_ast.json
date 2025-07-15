@@ -1,0 +1,50 @@
+{
+  "id": "2343083424528",
+  "type": "Sequence",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083422608",
+      "type": "Literal",
+      "repr": "c",
+      "children": []
+    },
+    {
+      "id": "2343083416848",
+      "type": "Literal",
+      "repr": "o",
+      "children": []
+    },
+    {
+      "id": "2343083424144",
+      "type": "Literal",
+      "repr": "l",
+      "children": []
+    },
+    {
+      "id": "2343083425616",
+      "type": "Literal",
+      "repr": "o",
+      "children": []
+    },
+    {
+      "id": "2343083421392",
+      "type": "Question",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083423504",
+          "type": "Literal",
+          "repr": "u",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "2343083410768",
+      "type": "Literal",
+      "repr": "r",
+      "children": []
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "id": "2343083228624",
+  "type": "Sequence",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343083404496",
+      "type": "Star",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083359184",
+          "type": "Dot",
+          "repr": null,
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "2343083405584",
+      "type": "CharClass",
+      "repr": {
+        "chars": [
+          "i",
+          "e",
+          "a",
+          "u",
+          "o"
+        ],
+        "negated": false
+      },
+      "children": []
+    },
+    {
+      "id": "2343083228752",
+      "type": "CharClass",
+      "repr": {
+        "chars": [
+          "i",
+          "e",
+          "a",
+          "u",
+          "o"
+        ],
+        "negated": true
+      },
+      "children": []
+    },
+    {
+      "id": "2343083227920",
+      "type": "CharClass",
+      "repr": {
+        "chars": [
+          "i",
+          "e",
+          "a",
+          "u",
+          "o"
+        ],
+        "negated": false
+      },
+      "children": []
+    },
+    {
+      "id": "2343083228112",
+      "type": "Star",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083396048",
+          "type": "Dot",
+          "repr": null,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

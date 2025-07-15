@@ -1,0 +1,129 @@
+{
+  "id": "2343083274640",
+  "type": "Alternation",
+  "repr": null,
+  "children": [
+    {
+      "id": "2343073642512",
+      "type": "Sequence",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083415888",
+          "type": "Literal",
+          "repr": "L",
+          "children": []
+        },
+        {
+          "id": "2343083415632",
+          "type": "Literal",
+          "repr": "u",
+          "children": []
+        },
+        {
+          "id": "2343083424720",
+          "type": "Literal",
+          "repr": "n",
+          "children": []
+        },
+        {
+          "id": "2343083424528",
+          "type": "Literal",
+          "repr": "c",
+          "children": []
+        },
+        {
+          "id": "2343083413648",
+          "type": "Literal",
+          "repr": "h",
+          "children": []
+        },
+        {
+          "id": "2343082672400",
+          "type": "Literal",
+          "repr": "t",
+          "children": []
+        },
+        {
+          "id": "2343083404752",
+          "type": "Literal",
+          "repr": "i",
+          "children": []
+        },
+        {
+          "id": "2343083398608",
+          "type": "Literal",
+          "repr": "m",
+          "children": []
+        },
+        {
+          "id": "2343083403152",
+          "type": "Literal",
+          "repr": "e",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "2343083406672",
+      "type": "Sequence",
+      "repr": null,
+      "children": [
+        {
+          "id": "2343083400144",
+          "type": "Literal",
+          "repr": "l",
+          "children": []
+        },
+        {
+          "id": "2343083406736",
+          "type": "Literal",
+          "repr": "u",
+          "children": []
+        },
+        {
+          "id": "2343083393616",
+          "type": "Literal",
+          "repr": "n",
+          "children": []
+        },
+        {
+          "id": "2343083404112",
+          "type": "Literal",
+          "repr": "c",
+          "children": []
+        },
+        {
+          "id": "2343083404496",
+          "type": "Literal",
+          "repr": "h",
+          "children": []
+        },
+        {
+          "id": "2343083268432",
+          "type": "Literal",
+          "repr": "t",
+          "children": []
+        },
+        {
+          "id": "2343083269968",
+          "type": "Literal",
+          "repr": "i",
+          "children": []
+        },
+        {
+          "id": "2343083272912",
+          "type": "Literal",
+          "repr": "m",
+          "children": []
+        },
+        {
+          "id": "2343083266896",
+          "type": "Literal",
+          "repr": "e",
+          "children": []
+        }
+      ]
+    }
+  ]
+}
