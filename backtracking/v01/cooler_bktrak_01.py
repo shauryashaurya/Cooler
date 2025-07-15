@@ -3,6 +3,10 @@
 # breaking a pattern down into a tree of nodes (an Abstract Syntax Tree or AST)
 # and then executing that tree against a text.
 
+import os
+from ast_tracer import persist_ast, visualize_ast, ASTTracer
+
+
 class RegexNode:
     # The abstract base class for all nodes in the AST.
     # It establishes a contract: every node must have a `match` method.
@@ -386,15 +390,63 @@ if __name__ == "__main__":
         # until the 'b' can match.
         ("a*b", "aaab", True),
         ("a*b", "b", True),        # 'a*' matches zero times.
+        ("a(b|c)*d", "abcbcd"),                     # nested alternation + star
+        # char class + plus + optional + literal
+        ("[abc]+d?e", "abcee"),
+        ("ab?c+", "accc"),                          # optional + plus
+        # alternation grouping + plus
+        ("(a|bc)d+", "bcd"),
+        # char class sequence + star
+        ("[ab][cd]*", "accc"),
+        ("^a(bc)?d$", "ad"),                        # anchors + optional group
+        # multiple alternations + plus
+        ("(ab|cd|ef)+", "abcdefab"),
+        # optional class + plus literal
+        ("[xy]?z+", "zzzzz"),
+        # sequence class + plus + optional
+        ("([ab][cd])+e?", "acac"),
+        ("a((b|c)d)+e", "abcdcde"),                 # nested group + plus
+        ("(ab?c)*", "abcabc"),                      # optional inside star
+        # alternation class + literal + plus
+        ("([abc]|d)+", "abcdabc"),
+        ("a?b?c?", "abc"),                          # multiple optionals
+        ("(a|b)?c+", "cc"),                         # optional group + plus
+        ("[01]+1?", "01011"),                       # class + plus + optional
+        ("(ab|a)b", "abb"),                         # ambiguous alternation
+        # nested quantifiers + grouping
+        ("((a|b)c?)+d", "acd"),
+        ("(x|y)*(z|w)?", "xyxz"),                   # star + optional on groups
+        ("abc|def", "def"),                         # top-level alternation
+        ("(a|b)(c|d)(e|f)", "bdf"),                 # concatenated alternations
+        # successive plus quantifiers
+        ("a+b+c+", "aaabbbccc"),
+        ("(ab)*c?", "abab"),                        # group star + optional
+        # optional + star + plus + literal
+        ("[abc]?[def]*g+", "defgg"),
+        ("(a(b(c)d)e)f", "abcdef"),                 # deeply nested groups
+        ("[^ab]c+", "dcc"),                         # negated class + plus
     ]
 
     print("--- Running Full Match Tests ---")
+    counter = 0
+    if not os.path.exists("./ast"):
+        os.mkdir("./ast")
     for pattern, text, expected in tests:
         regex = BacktrackingRegex(pattern)
+
+        counter += 1
+        # Dump the AST out to JSON:
+        persist_ast(regex.ast, "./ast/"+str(counter)+"_regex_ast.json")
+
         result = regex.match(text)
         status = 'PASSED' if result == expected else 'FAILED'
+
         print(
             f"Pattern: {pattern:<8} Text: {text:<8} Expected: {str(expected):<5} Got: {str(result):<5} {status}")
+
+        # Render a PNG (or SVG) of the AST:
+        png_path = visualize_ast(
+            regex.ast, output_path="./ast/"+str(counter)+"regex_ast_diagram")
 
     print("\n--- Running Search and Findall Tests ---")
     # Search finds the first occurrence. 'a+b' will find 'aaab'.
