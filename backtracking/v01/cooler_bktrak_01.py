@@ -146,6 +146,43 @@ class Question(RegexNode):
         yield from self.node.match(text, pos)
 
 
+class LazyStar(RegexNode):
+    def __init__(self, node):
+        self.node = node
+
+    def match(self, text, pos):
+        # non-greedy: first zero repeats
+        yield pos
+        # then try consuming one and recurse
+        for mid in self.node.match(text, pos):
+            for end in self.match(text, mid):
+                yield end
+
+
+class LazyPlus(RegexNode):
+    def __init__(self, node):
+        self.node = node
+
+    def match(self, text, pos):
+        # must match one first
+        for mid in self.node.match(text, pos):
+            yield mid
+            # then behave like LazyStar on the rest
+            for end in LazyStar(self.node).match(text, mid):
+                yield end
+
+
+class LazyQuestion(RegexNode):
+    def __init__(self, node):
+        self.node = node
+
+    def match(self, text, pos):
+        # zero or one, but zero first
+        yield pos
+        for end in self.node.match(text, pos):
+            yield end
+
+
 # --- COMBINER NODES: Combine other nodes into larger expressions. ---
 
 class Alternation(RegexNode):
@@ -188,6 +225,45 @@ class Sequence(RegexNode):
             yield from self._match_sequence(text, new_pos, node_idx + 1)
 
 
+class NonCaptureGroup(RegexNode):
+    def __init__(self, inner):
+        self.inner = inner
+
+    def match(self, text, pos):
+        # just delegate to inner
+        yield from self.inner.match(text, pos)
+
+
+class Lookahead(RegexNode):
+    def __init__(self, inner, positive=True):
+        self.inner = inner
+        self.positive = positive
+
+    def match(self, text, pos):
+        ok = any(self.inner.match(text, pos))
+        if ok is self.positive:
+            yield pos
+
+
+class Lookbehind(RegexNode):
+    def __init__(self, inner, positive=True):
+        self.inner = inner
+        self.positive = positive
+
+    def match(self, text, pos):
+        # try all possible start points so that inner.match(start)->pos
+        found = False
+        for start in range(0, pos+1):
+            for end in self.inner.match(text, start):
+                if end == pos:
+                    found = True
+                    break
+            if found:
+                break
+        if found is self.positive:
+            yield pos
+
+
 # --- PARSER: Converts a pattern string into an AST. ---
 
 class RegexParser:
@@ -198,12 +274,14 @@ class RegexParser:
         self.pattern = pattern
         self.pos = 0
 
+    ##
     def parse(self):
         node = self.parse_alternation()
         if self.pos < len(self.pattern):
             raise ValueError(f"Unexpected character at position {self.pos}")
         return node
 
+    ##
     def parse_alternation(self):
         left = self.parse_sequence()
         if self.pos < len(self.pattern) and self.pattern[self.pos] == '|':
@@ -212,6 +290,7 @@ class RegexParser:
             return Alternation(left, right)
         return left
 
+    ##
     def parse_sequence(self):
         nodes = []
         while self.pos < len(self.pattern) and self.pattern[self.pos] not in ')|':
@@ -221,6 +300,7 @@ class RegexParser:
             return nodes[0]
         return Sequence(nodes)
 
+    ##
     def parse_factor(self):
         # A factor is an atom plus an optional quantifier.
         node = self.parse_atom()
@@ -237,45 +317,108 @@ class RegexParser:
                 return Question(node)
         return node
 
+    ##
     def parse_atom(self):
-        # An atom is the smallest unit: a literal, group, class, or anchor.
         if self.pos >= len(self.pattern):
             raise ValueError("Unexpected end of pattern")
-        char = self.pattern[self.pos]
+        c = self.pattern[self.pos]
 
-        if char == '(':
-            self.pos += 1
-            # A group can contain any sub-expression.
+        # GROUPS & LOOKAROUNDS
+        if c == '(':
+            self.pos += 1  # consume '('
+
+            # detect lookaround or non-capturing
+            if self.pos+1 < len(self.pattern) and self.pattern[self.pos] == '?':
+                op = self.pattern[self.pos+1]
+                # non-capturing
+                if op == ':':
+                    self.pos += 2
+                    node = self.parse_alternation()
+                    if self.pattern[self.pos] != ')':
+                        raise ValueError("Unclosed group")
+                    self.pos += 1
+                    return NonCaptureGroup(node)
+
+                # positive lookahead
+                if op == '=':
+                    self.pos += 2
+                    node = self.parse_alternation()
+                    if self.pattern[self.pos] != ')':
+                        raise ValueError("Unclosed lookahead")
+                    self.pos += 1
+                    return Lookahead(node, positive=True)
+
+                # negative lookahead
+                if op == '!':
+                    self.pos += 2
+                    node = self.parse_alternation()
+                    if self.pattern[self.pos] != ')':
+                        raise ValueError("Unclosed neg lookahead")
+                    self.pos += 1
+                    return Lookahead(node, positive=False)
+
+                # positive lookbehind
+                if self.pattern[self.pos+1:self.pos+3] == '<=':
+                    self.pos += 3
+                    node = self.parse_alternation()
+                    if self.pattern[self.pos] != ')':
+                        raise ValueError("Unclosed lookbehind")
+                    self.pos += 1
+                    return Lookbehind(node, positive=True)
+
+                # negative lookbehind
+                if self.pattern[self.pos+1:self.pos+3] == '<!':
+                    self.pos += 3
+                    node = self.parse_alternation()
+                    if self.pattern[self.pos] != ')':
+                        raise ValueError("Unclosed neg lookbehind")
+                    self.pos += 1
+                    return Lookbehind(node, positive=False)
+
+            # plain capturing group
             node = self.parse_alternation()
             if self.pos >= len(self.pattern) or self.pattern[self.pos] != ')':
                 raise ValueError("Missing closing parenthesis")
             self.pos += 1
             return node
-        elif char == '[':
+
+        # CHARACTER CLASS
+        elif c == '[':
             return self.parse_char_class()
-        elif char == '.':
+
+        # WILDCARD DOT
+        elif c == '.':
             self.pos += 1
             return Dot()
-        elif char == '^':
+
+        # ANCHORS
+        elif c == '^':
             self.pos += 1
             return Start()
-        elif char == '$':
+        elif c == '$':
             self.pos += 1
             return End()
-        elif char == '\\':
-            self.pos += 1  # Consume '\'
-            if self.pos >= len(self.pattern):
-                raise ValueError("Pattern ends with an escape character")
-            escaped_char = self.pattern[self.pos]
+
+        # ESCAPE SEQUENCE
+        elif c == '\\':
             self.pos += 1
-            return Literal(escaped_char)
-        elif char in '*+?|()[]^$\\':
+            if self.pos >= len(self.pattern):
+                raise ValueError("Pattern ends with '\\\\'")
+            lit = self.pattern[self.pos]
+            self.pos += 1
+            return Literal(lit)
+
+        # UNESCAPED SPECIALS
+        elif c in '*+?|)[]^$':
             raise ValueError(
-                f"Unescaped special character '{char}' at position {self.pos}")
+                f"Unescaped special character '{c}' at position {self.pos}")
+
+        # LITERAL
         else:
             self.pos += 1
-            return Literal(char)
+            return Literal(c)
 
+    ##
     def parse_char_class(self):
         self.pos += 1  # Consume '['
         negated = self.pattern[self.pos] == '^'
@@ -343,7 +486,10 @@ class BacktrackingRegex:
 
 
 if __name__ == "__main__":
-    # --- Test Cases ---
+    if not os.path.exists("./ast"):
+        os.mkdir("./ast")
+
+    # --- Match tests ---
     # Each tuple: (pattern, text, expected_result_for_full_match)
     tests = [
         # Basic literal sequence. Must match exactly.
@@ -390,69 +536,205 @@ if __name__ == "__main__":
         # until the 'b' can match.
         ("a*b", "aaab", True),
         ("a*b", "b", True),        # 'a*' matches zero times.
-        ("a(b|c)*d", "abcbcd"),                     # nested alternation + star
-        # char class + plus + optional + literal
-        ("[abc]+d?e", "abcee"),
-        ("ab?c+", "accc"),                          # optional + plus
-        # alternation grouping + plus
-        ("(a|bc)d+", "bcd"),
-        # char class sequence + star
-        ("[ab][cd]*", "accc"),
-        ("^a(bc)?d$", "ad"),                        # anchors + optional group
-        # multiple alternations + plus
-        ("(ab|cd|ef)+", "abcdefab"),
-        # optional class + plus literal
-        ("[xy]?z+", "zzzzz"),
-        # sequence class + plus + optional
-        ("([ab][cd])+e?", "acac"),
-        ("a((b|c)d)+e", "abcdcde"),                 # nested group + plus
-        ("(ab?c)*", "abcabc"),                      # optional inside star
-        # alternation class + literal + plus
-        ("([abc]|d)+", "abcdabc"),
-        ("a?b?c?", "abc"),                          # multiple optionals
-        ("(a|b)?c+", "cc"),                         # optional group + plus
-        ("[01]+1?", "01011"),                       # class + plus + optional
-        ("(ab|a)b", "abb"),                         # ambiguous alternation
-        # nested quantifiers + grouping
-        ("((a|b)c?)+d", "acd"),
-        ("(x|y)*(z|w)?", "xyxz"),                   # star + optional on groups
-        ("abc|def", "def"),                         # top-level alternation
-        ("(a|b)(c|d)(e|f)", "bdf"),                 # concatenated alternations
-        # successive plus quantifiers
-        ("a+b+c+", "aaabbbccc"),
-        ("(ab)*c?", "abab"),                        # group star + optional
-        # optional + star + plus + literal
-        ("[abc]?[def]*g+", "defgg"),
-        ("(a(b(c)d)e)f", "abcdef"),                 # deeply nested groups
-        ("[^ab]c+", "dcc"),                         # negated class + plus
+        ("a(b|c)*d", "abcbcd", True),  # nested alternation + star
+        ("[abc]+d?e", "abcee", True),  # char class + plus + optional + literal
+        ("ab?c+", "accc", True),       # optional + plus
+        ("(a|bc)d+", "bcd", True),     # alternation grouping + plus
+        ("[ab][cd]*", "accc", True),   # char class sequence + star
+        ("^a(bc)?d$", "ad", True),     # anchors + optional group
+        ("(ab|cd|ef)+", "abcdefab", True),  # multiple alternations + plus
+        ("[xy]?z+", "zzzzz", True),    # optional class + plus literal
+        ("([ab][cd])+e?", "acac", True),  # sequence class + plus + optional
+        ("a((b|c)d)+e", "abcdcde", True),  # nested group + plus
+        ("(ab?c)*", "abcabc", True),   # optional inside star
+        ("([abc]|d)+", "abcdabc", True),  # alternation class + literal + plus
+        ("a?b?c?", "abc", True),       # multiple optionals
+        ("(a|b)?c+", "cc", True),      # optional group + plus
+        ("[01]+1?", "01011", True),   # class + plus + optional
+        ("(ab|a)b", "abb", True),     # ambiguous alternation
+        ("((a|b)c?)+d", "acd", True),  # nested quantifiers + grouping
+        ("(x|y)*(z|w)?", "xyxz", True),  # star + optional on groups
+        ("abc|def", "def", True),      # top-level alternation
+        ("(a|b)(c|d)(e|f)", "bdf", True),  # concatenated alternations
+        ("a+b+c+", "aaabbbccc", True),   # successive plus quantifiers
+        ("(ab)*c?", "abab", True),    # group star + optional
+        ("[abc]?[def]*g+", "defgg", True),  # optional + star + plus + literal
+        ("(a(b(c)d)e)f", "abcdef", True),  # deeply nested groups
+        ("[^ab]c+", "dcc", True),     # negated class + plus
+        # Negative test cases
+        ("a+b", "ab", True),           # 'a+' requires one or more 'a', then 'b'
+        ("a+b", "b", False),          # no leading 'a'
+        ("^hello$", "hello world", False),  # anchor mismatch
+        ("colou?r", "color", True),   # optional 'u'
+        ("colou?r", "colour", True),  # optional 'u'
+        ("colou?r", "colouur", False),  # extra 'u'
+        # vowel-consonant-vowel
+        (".*[aeiou][^aeiou][aeiou].*", "Douglas Adams", True),
+        # anchors + sequence
+        ("^[Tt]ime.*illusion.*", "Time is an illusion. Lunchtime doubly so.", True),
+        (".*lunchtime.*", "Time is an illusion. Lunchtime doubly so.",
+         True),       # substring
+        # alternation
+        (".*(dead|die).*", "No one is actually dead until the ripples they cause in the world die away.", True),
+        (".*story.*life.*", "If you don't turn your life into a story, you just become a part of someone else's story.", True),  # sequence
+        # optional group
+        (".*cats? were.*", "In ancient times cats were worshipped as gods; they have not forgotten this.", True),
+        # optional quantifier
+        (".*gods?;.*", "In ancient times cats were worshipped as gods; they have not forgotten this.", True),
+        (".*hammers and screwdrivers.*", "The reason that cliches become cliches is that they are the hammers and screwdrivers in the toolbox of communication.", True),  # literal phrase
+        (".*toolbox.*", "The reason that cliches become cliches is that they are the hammers and screwdrivers in the toolbox of communication.",
+         True),               # substring
+        # char class + plus
+        (".*[A-Za-z]+ing.*", "The trouble with having an open mind is that people will insist on coming along and trying to put things in it.", True),
+        # substring
+        (".*being.*", "Evil begins when you begin to treat people as things.", True),
+        # substring
+        (".*experience.*", "Wisdom comes from experience. Experience is often a result of lack of wisdom.", True),
+        # substring
+        (".*lack.*", "Wisdom comes from experience. Experience is often a result of lack of wisdom.", True),
+        (".*knowledge.*", "They say a little knowledge is a dangerous thing, but it’s not one half so bad as a lot of ignorance.", True),  # substring
+        (".*ignorance.*", "They say a little knowledge is a dangerous thing, but it’s not one half so bad as a lot of ignorance.", True),  # substring
+        # composite
+        (".*dead.*ripples.*",
+         "No one is actually dead until the ripples they cause in the world die away.", True),
+        # anchor + char class
+        ("^[Nn]ight", "Night doesn’t seem so bad once you’re accustomed to it.", True),
     ]
 
     print("--- Running Full Match Tests ---")
     counter = 0
-    if not os.path.exists("./ast"):
-        os.mkdir("./ast")
-    for pattern, text, expected in tests:
+
+    # for pattern, text, expected in tests:
+    #     regex = BacktrackingRegex(pattern)
+
+    #     counter += 1
+    #     # Dump the AST out to JSON:
+    #     persist_ast(regex.ast, "./ast/match_"+str(counter)+"_regex_ast.json")
+
+    #     result = regex.match(text)
+    #     status = 'PASSED' if result == expected else 'FAILED'
+
+    #     print(
+    #         f"Pattern: {pattern:<8} Text: {text:<8} Expected: {str(expected):<5} Got: {str(result):<5} {status}")
+
+    #     # Render a PNG (or SVG) of the AST:
+    #     png_path = visualize_ast(
+    #         regex.ast, output_path="./ast/match_"+str(counter)+"regex_ast_diagram")
+
+    # print("\n--- Running Search and Findall Tests ---")
+
+    # ---------Search and Find All ------------
+    # # Search finds the first occurrence. 'a+b' will find 'aaab'.
+    # regex_search = BacktrackingRegex("a+b")
+    # print(f"Search 'a+b' in 'xaaabyz': {regex_search.search('xaaabyz')}")
+    # TESTING SEARCH -----------
+    SEARCH_TESTS = [
+        # (pattern, text, expected_bool)
+        (r"a+b", "aaab", True),
+        (r"a+b", "b", False),
+        (r"\bthe\b", "In the beginning", True),
+        (r"\bThe\b", "in the Beginning", False),
+        # (?: … ) (the “non-capturing” group syntax)
+        (r"(?:foo|bar)", "xxbarxx", True),
+        (r"(foo|bar)", "xxbarxx", True),
+        (r"(foo|bar)", "xxbazxx", False),
+        (r".+'s", "Hitchhiker's", True),
+        (r".+'s", "Hitchhikers", False),
+        (r"colou?r", "color", True),
+        (r"colou?r", "colour", True),
+        (r"colou?r", "colouur", False),
+        (r"\d{4}", "Year 2025 AD", True),
+        (r"\d{4}", "No digits here", False),
+        (r"\b\w{5}\b", "hello world", True),
+        (r"\b\w{5}\b", "hi all", False),
+        (r"[A-Z][a-z]+", "Douglas Adams", True),
+        (r"[A-Z][a-z]+", "douglas", False),
+        (r"(Lunchtime|lunchtime)", "Lunchtime doubly", True),
+        (r"(Lunchtime|lunchtime)", "lunchtime doubly", True),
+        (r"(Lunchtime|lunchtime)", "afternoon", False),
+        (r"^Night", "Night doesn’t...", True),
+        (r"^Night", "At nightfall...", False),
+        (r"foo.*bar", "foo123bar", True),
+        (r"foo.*bar", "foobar", True),
+        (r"foo.*bar", "fooBAZ", False),
+        (r"([^aeiou]{2})", "rhythm", True),
+        (r"[A-Z]{2,}", "NASA", True),
+        (r"[A-Z]{2,}", "Nasa", False),
+        (r"\w+-\w+", "back-tract", True),
+        (r"\w+-\w+", "no-dash", True),
+        (r"\w+-\w+", "nodash", False),
+        (r"a.*?b", "axxb", True),
+        (r"a.*b", "axxb", True),
+        (r"(dog|cat)s?", "dogs and cats", True),
+        (r"(dog|cat)s?", "dog and cat", True),
+        (r"(dog|cat)s?", "bird", False),
+        (r"(ha){3}", "hahaha", True),
+        (r"(ha){3}", "haha", False),
+        (r"\d{3}-\d{2}-\d{4}", "123-45-6789", True),
+        (r"\d{3}-\d{2}-\d{4}", "12-345-6789", False),
+        (r"[A-Za-z0-9]+@[A-Za-z]+\.[A-Za-z]{2,4}", "user@example.com", True),
+        (r"[A-Za-z0-9]+@[A-Za-z]+\.[A-Za-z]{2,4}", "userexample.com", False),
+        (r"https?://[^\s]+", "Visit http://example.com now", True),
+        (r"https?://[^\s]+", "Secure https://site.org", True),
+        (r"https?://[^\s]+", "no protocol site.org", False),
+        (r"\b[A-Fa-f0-9]{6}\b", "Color FF5733 is nice", True),
+        (r"\b[A-Fa-f0-9]{6}\b", "Color 123ABZ is invalid", False),
+        (r"\d{1,2}:\d{2}", "Time 09:45", True),
+        (r"\d{1,2}:\d{2}", "At 7:5", False),
+        (r"([01]?\d|2[0-3]):[0-5]\d", "23:59", True),
+        (r"(?:[^aeiou]{2})", "rhythm", True),
+        (r"[A-Z]{2,}", "NASA", True),
+        (r"[A-Z]{2,}", "Nasa", False),
+        (r"\w+-\w+", "back-tract", True),
+        (r"\w+-\w+", "no-dash", True),
+        (r"\w+-\w+", "nodash", False),
+        (r"a.*?b", "axxb", True),
+        (r"a.*b", "axxb", True),
+        (r"(dog|cat)s?", "dogs and cats", True),
+        (r"(dog|cat)s?", "dog and cat", True),
+        (r"(dog|cat)s?", "bird", False),
+        (r"(ha){3}", "hahaha", True),
+        (r"(ha){3}", "haha", False),
+        (r"\d{3}-\d{2}-\d{4}", "123-45-6789", True),
+        (r"\d{3}-\d{2}-\d{4}", "12-345-6789", False),
+        (r"[A-Za-z0-9]+@[A-Za-z]+\.[A-Za-z]{2,4}", "user@example.com", True),
+        (r"[A-Za-z0-9]+@[A-Za-z]+\.[A-Za-z]{2,4}", "userexample.com", False),
+        (r"https?://[^\s]+", "Visit http://example.com now", True),
+        (r"https?://[^\s]+", "Secure https://site.org", True),
+        (r"https?://[^\s]+", "no protocol site.org", False),
+        (r"\b[A-Fa-f0-9]{6}\b", "Color FF5733 is nice", True),
+        (r"\b[A-Fa-f0-9]{6}\b", "Color 123ABZ is invalid", False),
+        (r"\d{1,2}:\d{2}", "Time 09:45", True),
+        (r"\d{1,2}:\d{2}", "At 7:5", False),
+        (r"([01]?\d|2[0-3]):[0-5]\d", "23:59", True),
+    ]
+
+    counter = 0
+
+    for pattern, text, expected in SEARCH_TESTS:
+        counter += 1
+
+        print(f"[SEARCH] {pattern!r} in {text!r} → expected={expected}")
         regex = BacktrackingRegex(pattern)
 
-        counter += 1
-        # Dump the AST out to JSON:
-        persist_ast(regex.ast, "./ast/"+str(counter)+"_regex_ast.json")
+        # build & snapshot AST
+        ast = regex.ast
+        persist_ast(ast, "./ast/search_"+str(counter)+"_regex_ast.json")
+        visualize_ast(ast, output_path="./ast/search_" +
+                      str(counter)+"_regex_ast")
 
-        result = regex.match(text)
-        status = 'PASSED' if result == expected else 'FAILED'
+        # # trace & run search()
+        # tracer = ASTTracer()
+        # tracer.instrument(ast)
+        found = regex.search(text) is not None
+        # tracer.restore()
 
-        print(
-            f"Pattern: {pattern:<8} Text: {text:<8} Expected: {str(expected):<5} Got: {str(result):<5} {status}")
+        print("  → result:", found, "| PASS" if found == expected else "FAIL")
+        # for evt in tracer.get_trace():
+        #     print("    ", evt)
+        print()
 
-        # Render a PNG (or SVG) of the AST:
-        png_path = visualize_ast(
-            regex.ast, output_path="./ast/"+str(counter)+"regex_ast_diagram")
-
-    print("\n--- Running Search and Findall Tests ---")
-    # Search finds the first occurrence. 'a+b' will find 'aaab'.
-    regex_search = BacktrackingRegex("a+b")
-    print(f"Search 'a+b' in 'xaaabyz': {regex_search.search('xaaabyz')}")
-
+    # Testing FIND ALL ---------------
     # Findall finds all non-overlapping occurrences.
     regex_findall = BacktrackingRegex("a+")
     print(
@@ -460,3 +742,116 @@ if __name__ == "__main__":
     # This tests the zero-length match edge case. 'z*' can match an empty string
     # at every position. The `max(pos + 1, ...)` logic ensures we advance.
     print(f"Find all 'z*' in 'abc': {regex_findall.findall('abc')}")
+
+    # --- FIND_ALL TESTS ---
+    FINDALL_TESTS = [
+        # (pattern, text, expected_count)
+        (r"\b\w+\b", "One two three", 3),
+        (r"\d+", "ID: 123, 456; 789", 3),
+        (r"[aeiou]", "Douglas Adams", 5),
+        (r"[A-Z]", "Hitchhiker's Guide", 2),
+        (r"[xy]{2,}", "xyxyz", 2),
+        (r"so+", "soooo... so so", 3),
+        (r"lun?ch", "lunch LunCh lch", 2),
+        (r"colou?r", "color colour colouur", 2),
+        (r"don't", "Don't panic, don't worry", 2),
+        (r"\bthe\b", "the The tHe THE the", 2),
+        (r"\w+ing", "running jogging walking", 3),
+        (r"^Night", "Night Nightfall Night", 2),
+        (r"\.", "Mr. Adams. Dr. Who.", 3),
+        (r"[,.!?]", "Hello, world! Goodbye?", 3),
+        (r"foo", "foofoo foo foo", 4),
+        (r"bar", "bar baz barbar", 3),
+        (r"[A-Za-z]{4}", "This is four char", 2),
+        (r"\b\w{1,3}\b", "a an the of", 3),
+        (r"h.{2}p", "hop hip hep hxp", 4),
+        (r"(?:ha){2}", "hahaha haha ha", 2),
+        (r"[^aeiou\s]+", "crypt rhythm myth", 3),
+        (r"\d{2}", "12 3456 78 9", 3),
+        (r"\b\w+['’]\w+\b", "don't won't it's", 3),
+        (r"\b\w+:\b", "key:value bad:case", 2),
+        (r"\b\w+ly\b", "quickly slowly surely", 3),
+        (r"\w{4}", "This code test", 3),
+        (r"\b\w*[aeiou]{2}\w*\b", "cooperation beautiful queue", 3),
+        (r"\d+", "Phone: +123 456 7890", 3),
+        (r"[A-Z][a-z]+", "Home in CamelCase", 3),
+        (r"[A-Z][a-z]+", "lowercase uppercase", 1),
+        (r"colou?r", "color colour colouur color", 3),
+        (r"(?:Mr|Mrs)\.", "Mr. and Mrs. Smith", 2),
+        (r"(?:Mr|Mrs)\.", "No titles here", 0),
+        (r"(na){2}", "banana banana", 2),
+        (r"cat|dog", "catdogdogcat", 4),
+        (r"\b[a-z]{3}\b", "one two six seven", 3),
+        (r"[^\w\s]+", "Hello, world!???", 3),
+        (r"\b\w+ing\b", "sing singing bringing string", 3),
+        (r"\b\w{5}\b", "large small tiny short", 3),
+        (r"\d{2,4}", "1 12 123 1234 12345", 3),
+        (r"(ha)+", "hahaha haha ha", 3),
+        (r"\b\w+\b", "word1 word2", 2),
+        (r"[A-Z]{2}", "AA BB C", 2),
+        (r"[A-Z]{2}", "A B", 0),
+        (r"\.\.\.", "Wait... Really...", 2),
+        (r'"[^"\r\n]+"', 'She said "Hi" and left', 1),
+        (r"-{2,}", "dash-- dash--- dash-", 2),
+        (r"\b\w+['’]\w+\b", "don't won't it's", 3),
+        (r"\b\w+:\b", "key:value bad:case", 2),
+        (r"\b\w+ly\b", "quickly slowly surely", 3),
+        (r"(?:foo|bar)", "foofoobarbarbar", 4),
+        (r"foo(?=bar)", "foobar foofoobarbar foo", 3),
+        (r"foo(?!bar)", "foobaz fooqux foobar", 2),
+        (r"(?<=foo)bar", "foobar foo barfoobar", 2),
+        (r"(?<!foo)bar", "bar foo barbar", 2),
+        (r"(?<=\d)\D", "1a2b3c", 3),
+        (r"(?=\d)", "a1b2c3", 3),
+        (r"\b(?:a|b)c\b", "ac bc dc ac bc", 4),
+        (r"(?<=\s)\w+", " one two three ", 3),
+        (r"\w+(?=\.)", "Mr. Smith. Dr. Who.", 3),
+        (r"(?<!\.)\w+(?<!\.)", "hello.world test...", 1),
+        (r"(?:ha){2,}", "hahaha haha hah", 2),
+        (r"(?<=un)matched", "unmatched unmatched", 2),
+        (r"(?<!un)matched", "unmatched unmatched", 1),
+        (r"(?<=\b)\w{3}\b", "one two three four", 3),
+        (r"(?<!\b)\w{3}\b", "one two three four", 0),
+        (r"(?:colou?r)", "color colour colouur color", 3),
+        (r"(?=\b\w{5}\b)", "hello world there", 1),
+        (r"(?<=\b\w{5}\b)", "hello world there", 1),
+        (r"(?<!\w)\w{4}(?!\w)", "test code hard here", 3),
+        (r"(?<=\b)\d{2}(?=\b)", "12 3456 78 9 01", 3),
+        (r"(?<=\D)\d+(?=\D)", "a123b456c7", 2),
+        (r"(?<!\d)\d+(?!\d)", "a123b456c7", 2),
+        (r"(?<=\b)(?:dog|cat)(?=\b)", "dog cat pig dog", 3),
+        (r"(?<=\b)(?!pig)\w+\b", "dog pig cat", 2),
+        (r"(?<=a)b+(?=c)", "abbbc abc", 2),
+        (r"(?<!a)b+(?!c)", "bb bc bb", 1),
+        (r"(?:ab){2}", "abab ab ababab", 2),
+        (r"(?=ab)", "ababab", 3),
+        (r"(?<=ab)", "ababab", 3),
+        (r"(?:a|b)+c", "aababc", 1),
+        (r"(?<=a)b+c", "abbbc abc", 1),
+        (r"(?<!x)x+y", "xxy yy xyy", 2),
+        (r"(?:x|y){1,3}", "xyx yyy xxxx", 3),
+        (r"(?<=\.)\w+", "end. start middle.", 2),
+        (r"(?<!\.)\w+", "end. start middle.", 2),
+        (r"\b(?=\w{4}\b)\w+\b", "four five six seven", 1),
+        (r"\b(?<=\w{4}\b)\w+\b", "four five six seven", 1),
+        (r"(?<=un)happy", "unhappy happy", 1),
+    ]
+
+    for pattern, text, expected_count in FINDALL_TESTS:
+        print(f"[FIND_ALL] {pattern!r} in {text!r} → expect {expected_count}")
+        regex = BacktrackingRegex(pattern)
+
+        # build & snapshot AST
+        ast = build_ast(pattern)
+        persist_ast(ast, f"findall_ast_{pattern}.json")
+        visualize_ast(ast, output_path=f"findall_ast_{pattern}")
+
+        # # trace & run find_all()
+        # tracer = ASTTracer(); tracer.instrument(ast)
+        # all_matches = regex.find_all(text)
+        # tracer.restore()
+
+        print("  → found:", len(all_matches), "| PASS" if len(
+            all_matches) == expected_count else "FAIL")
+        # for evt in tracer.get_trace(): print("    ", evt)
+        print()
