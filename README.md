@@ -1,5 +1,5 @@
 # The Cooler Regular Expressions Engine
-CooleRE (cooler) is a set of regular expression engines implemented from scratch in Python.
+Cooler (cool-RE, get it?) is a set of regular expression engines implemented from scratch in Python.
 
 The goal is to implement 3 variants:
 1. [A toy engine for learning](https://github.com/shauryashaurya/coolRE/tree/main/toy)
@@ -20,7 +20,7 @@ So why do this? For fun.
 Not to study how regex works, there's better ways to learn regex. 
 But to learn, how to do more than just use regex.
 
-Trying to build **the CooleRE 3** - should be an interesting refresher in elementary Theory of Computation, Automata, Compilers.  
+Trying to build **the Cooler 3** - should be an interesting refresher in elementary Theory of Computation, Automata, Compilers.  
 
 
 ## What's in it for you?
@@ -39,9 +39,15 @@ What I'll use:
 * http://gsf.cococlyde.org/download
 * https://ia801907.us.archive.org/8/items/glenn_fowler_interpretation_of_posix_standard/glenn_fowler_interpretation_of_posix_standard.pdf
 * https://kean.blog/post/lets-build-regex and https://github.com/kean/Regex
-* Regular Expressions specs (I don't know how much I'll use these, but, just in case...):
+* The POSIX ERE:
+	* [Regular Expressions/POSIX-Extended Regular Expressions](https://en.wikibooks.org/wiki/Regular_Expressions/POSIX-Extended_Regular_Expressions)
+	* At [Regular-Expressions.info](https://www.regular-expressions.info/posix.html)
+* Other Regular Expressions specs (I don't know how much I'll use these, but, just in case...):
   * [PCRE](https://www.pcre.org/current/doc/html/pcre2pattern.html)
   * [ECMAScript 2022 aka JavaScript](https://tc39.es/ecma262/#sec-regexp-regular-expression-objects)
+  * [From the GNU Manual](https://www.gnu.org/software/findutils/manual/html_node/find_html/Regular-Expressions.html)
+	* [‘posix-basic’ regular expression syntax](https://www.gnu.org/software/findutils/manual/html_node/find_html/posix_002dbasic-regular-expression-syntax.html)
+	* [‘posix-egrep’ regular expression syntax](https://www.gnu.org/software/findutils/manual/html_node/find_html/posix_002degrep-regular-expression-syntax.html)
 
 
 
