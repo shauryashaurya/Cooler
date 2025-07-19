@@ -1,7 +1,8 @@
 import json
 from graphviz import Digraph
 
-# AST tooling for cooler_bktrak_01 without module-level imports to avoid circular dependencies
+# AST tooling for cooler_bktrak_01 
+# trying to avoid dumbness and circular dependencies
 
 
 def build_ast(pattern: str):
