@@ -1,6 +1,10 @@
 # The Cooler Regular Expressions Engine
 Cooler (cool-RE, get it?) is a set of regular expression engines implemented from scratch in Python.
 
+<html> 
+	<img src="./images/cooler_banner_02.png.png" width="90%" align="center" alt="Cooler (cool-RE, get it?) is a set of regular expression engines implemented from scratch in Python, © Shaurya Agarwal" />  
+</html>  
+
 The goal is to implement 3 variants:
 1. [A toy engine for learning](https://github.com/shauryashaurya/coolRE/tree/main/toy)
 1. [One based on backtracking](https://github.com/shauryashaurya/coolRE/tree/main/backtracking)
