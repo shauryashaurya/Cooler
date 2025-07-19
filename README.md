@@ -2,7 +2,7 @@
 Cooler (cool-RE, get it?) is a set of regular expression engines implemented from scratch in Python.
 
 <html> 
-	<img src="./images/cooler_banner_02.png.png" width="90%" align="center" alt="Cooler (cool-RE, get it?) is a set of regular expression engines implemented from scratch in Python, © Shaurya Agarwal" />  
+	<img src="./images/cooler_banner_02.png" width="90%" align="center" alt="Cooler (cool-RE, get it?) is a set of regular expression engines implemented from scratch in Python, © Shaurya Agarwal" />  
 </html>  
 
 The goal is to implement 3 variants:
