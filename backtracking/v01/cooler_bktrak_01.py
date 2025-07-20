@@ -1,15 +1,29 @@
 # backtracking regular expression engine.
-# ...we show how regex parsing and matching works by
-# breaking a pattern down into a tree of nodes (an Abstract Syntax Tree or AST)
+# ...checkout how regex parsing and matching works...
+# breaking a regex "pattern" down into a tree of nodes (an AST - Abstract Syntax Tree)
 # and then executing that tree against a text.
+# this is just like building a data engine
+# breaking the SQL (or whatever interface) query into a AST (or sth. similar)
+# then executing that AST on the data
+# I don't know if the analogy makes sense, it's probably confusing, I assumed you knew,
+# ignore these last few lines... just read on, it'll make sense...
+
 
 import os
+
+# this is going to help us visualize the AST. Lots of fun.
 from ast_tracer import persist_ast, visualize_ast, ASTTracer
 
 
+# I have honestly never enjoyed object oriented programming
+# but this is an example of how elegant and even enjoyable it can be
+# I guess it's also the ease of doing it in Python.
+# recent YouTube vid, for those with time on their hands: https://www.youtube.com/watch?v=wo84LFzx5nI&t=436s
+#
+# back to building an ABC
 class RegexNode:
-    # The abstract base class for all nodes in the AST.
-    # It establishes a contract: every node must have a `match` method.
+    # The ABC - abstract base class - for all nodes in the AST. (alphabet soup)
+    # It establishes a contract: every 'node' in our regex pattern must have a `match` method.
     def match(self, text, pos):
         # The `match` method is a generator. It takes the input text and a
         # starting position. It `yields` each possible end position for a
@@ -20,7 +34,7 @@ class RegexNode:
             "Subclasses must implement the match method.")
 
 
-# --- ATOMIC NODES: Match single characters or positions. ---
+#  ATOMIC NODES: Match single characters or positions.
 
 class Literal(RegexNode):
     # Matches a single, specific character (e.g., 'a').
@@ -29,18 +43,20 @@ class Literal(RegexNode):
 
     def match(self, text, pos):
         if pos < len(text) and text[pos] == self.char:
-            yield pos + 1
+            yield pos + 1  # careful about off-by-one errors, my nemesis.
 
 
 class Dot(RegexNode):
-    # Matches any single character except a newline (though this engine doesn't check for newlines).
+    # Matches any single character except a newline
+    # (though this engine doesn't check for newlines, yet, Imma have to do sth abt it).
     def match(self, text, pos):
         if pos < len(text):
             yield pos + 1
 
 
 class CharClass(RegexNode):
-    # Matches a single character from a specified set (e.g., '[abc]' or '[^0-9]').
+    # Matches a single character from a specified set
+    # (e.g., '[abc]' or '[^0-9]').
     def __init__(self, chars, negated=False):
         # Using a set provides O(1) average time complexity for lookups.
         self.chars = set(chars)
@@ -49,8 +65,8 @@ class CharClass(RegexNode):
     def match(self, text, pos):
         if pos < len(text):
             char_in_text = text[pos]
-            # (char in set) is a boolean. `negated` is a boolean.
-            # `is_match = (char in set) != negated` handles both cases concisely.
+            # (char in set in self.chars) is a boolean. `negated` is a boolean.
+            # `is_match = (char in set in self.chars) != negated` handles both cases concisely.
             # If not negated: we need `True != False`, so `char in set` must be True.
             # If negated: we need `False != True`, so `char in set` must be False.
             if (char_in_text in self.chars) != self.negated:
@@ -74,7 +90,7 @@ class End(RegexNode):
             yield pos
 
 
-# --- QUANTIFIER NODES: Modify the behavior of another node. ---
+#  QUANTIFIER NODES: Modify the behavior of another node.
 
 class Star(RegexNode):
     # Matches the preceding node zero or more times ('*'). This is a greedy quantifier.
@@ -183,7 +199,7 @@ class LazyQuestion(RegexNode):
             yield end
 
 
-# --- COMBINER NODES: Combine other nodes into larger expressions. ---
+#  COMBINER NODES: Combine other nodes into larger expressions.
 
 class Alternation(RegexNode):
     # Handles alternation ('|'), matching either the left or the right side.
@@ -264,7 +280,7 @@ class Lookbehind(RegexNode):
             yield pos
 
 
-# --- PARSER: Converts a pattern string into an AST. ---
+#  PARSER: Converts a pattern string into an AST.
 
 class RegexParser:
     # A recursive descent parser that builds an AST from a regex pattern string.
@@ -318,8 +334,9 @@ class RegexParser:
     #     return node
 
     ##
+    # Try agani...
     def parse_factor(self):
-        # upgraded version - accounts for lazy parsing as well
+        # upgraded version (SMH) - accounts for lazy parsing as well
         # Parse an atom, then an optional quantifier (*, +, ?) with
         # optional lazy-modifier '?' (i.e. *?, +?, ??).
 
@@ -345,6 +362,7 @@ class RegexParser:
         return node
 
     ##
+    # BE SUPER CAREFUL ABOUT THIS, ONE SLIP AND ALL GETS 'EFF-ED
     def parse_atom(self):
         if self.pos >= len(self.pattern):
             raise ValueError("Unexpected end of pattern")
@@ -471,10 +489,16 @@ class RegexParser:
         return CharClass(chars, negated)
 
 
-# --- The Public-Facing Engine Class ---
-
+#  The Public-Facing Engine Class
+# this is what you instantiate and let it handle your pattern
+#
+# note: there's got to be a fast, less OOP way of doing this...
+# we saw that in the toy, but it's wonky.
+# this whole self recursive thing is a bit hard to think clearly about.
+#
 class BacktrackingRegex:
-    # The main class that users interact with. It orchestrates the parsing and matching.
+    # The main class that users interact with.
+    # It orchestrates the parsing and matching.
     def __init__(self, pattern):
         self.pattern = pattern
         self.ast = RegexParser(pattern).parse()
@@ -512,11 +536,22 @@ class BacktrackingRegex:
         return matches
 
 
+#
+#
+#
+#
+#
+#
+#
+# TODO: Extract this messy usage stuff into another file
+# make things clearer.
+# IMPLEMENTED: Tons of tests for .match, .search and .find_all methods
+# I am combing through my projects, trying to search for other examples to test.
 if __name__ == "__main__":
     if not os.path.exists("./ast"):
         os.mkdir("./ast")
 
-    # --- Match tests ---
+    #  Match tests
     # Each tuple: (pattern, text, expected_result_for_full_match)
     tests = [
         # Basic literal sequence. Must match exactly.
@@ -627,9 +662,11 @@ if __name__ == "__main__":
         # anchor + char class
         ("^[Nn]ight", "Night doesn’t seem so bad once you’re accustomed to it.", True),
     ]
+    #
 
-    print("--- Running Full Match Tests ---")
+    print(" Running Full Match Tests ")
     counter = 0
+    #
 
     for pattern, text, expected in tests:
         regex = BacktrackingRegex(pattern)
@@ -648,13 +685,13 @@ if __name__ == "__main__":
         png_path = visualize_ast(
             regex.ast, output_path="./ast/match_"+str(counter)+"regex_ast_diagram")
 
-    print("\n--- Running Search and Findall Tests ---")
+    print("\n Running Search and Findall Tests ")
 
-    # ---------Search and Find All ------------
+    # Search and Find All
     # # Search finds the first occurrence. 'a+b' will find 'aaab'.
     # regex_search = BacktrackingRegex("a+b")
     # print(f"Search 'a+b' in 'xaaabyz': {regex_search.search('xaaabyz')}")
-    # TESTING SEARCH -----------
+    # TESTING SEARCH --
     SEARCH_TESTS = [
         # (pattern, text, expected_bool)
         (r"a+b", "aaab", True),
@@ -802,7 +839,7 @@ if __name__ == "__main__":
         #     print("    ", evt)
         print()
 
-    # Testing FIND ALL ---------------
+    # Testing FIND ALL
     # Findall finds all non-overlapping occurrences.
     regex_findall = BacktrackingRegex("a+")
     print(
@@ -811,7 +848,7 @@ if __name__ == "__main__":
     # at every position. The `max(pos + 1, ...)` logic ensures we advance.
     print(f"Find all 'z*' in 'abc': {regex_findall.find_all('abc')}")
 
-    # --- FIND_ALL TESTS ---
+    #  FIND_ALL TESTS
     FINDALL_TESTS = [
         # (pattern, text, expected_count)
         (r"\b\w+\b", "One two three", 3),

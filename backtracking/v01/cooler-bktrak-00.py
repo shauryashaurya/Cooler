@@ -3,6 +3,13 @@
 # toy version
 # will imrprove (probably) as we go along...
 
+
+# UPDATED.
+# DEFUNCT NOW
+# V01 IS WHERE IT'S AT
+# IGNORE THIS PLEASE
+
+
 class RegexNode:
     # AST: every node must have a `match` method.
     def match(self, text, pos):

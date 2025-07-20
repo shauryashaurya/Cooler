@@ -1,14 +1,14 @@
 import json
 from graphviz import Digraph
 
-# AST tooling for cooler_bktrak_01 
+# AST tooling for cooler_bktrak_01
+#
 # trying to avoid dumbness and circular dependencies
+# from cooler_bktrak_01 import RegexParser
 
 
 def build_ast(pattern: str):
-    """
-    Parse a regex pattern into its AST using the engine’s RegexParser.
-    """
+    # Parse a regex pattern into its AST using the engine’s RegexParser.
     # Lazy import to avoid circular import
     from cooler_bktrak_01 import RegexParser
     parser = RegexParser(pattern)
@@ -16,9 +16,7 @@ def build_ast(pattern: str):
 
 
 def _collect_children(node):
-    """
-    Helper to collect child nodes for various AST node types via duck typing.
-    """
+    # Helper to collect child nodes for various AST node types via duck typing.
     children = []
     # Quantifiers: have attribute 'node'
     if hasattr(node, 'node'):
@@ -33,10 +31,9 @@ def _collect_children(node):
     return children
 
 
+# TODO: Implement ALL the features of the regex engine...
 def ast_to_dict(node):
-    """
-    Convert an AST into a JSON-serializable dictionary via duck typing.
-    """
+    # Convert an AST into a JSON-ish dictionary via duck typing.
     node_id = str(id(node))
     data = {
         "id": node_id,
@@ -60,18 +57,14 @@ def ast_to_dict(node):
 
 
 def persist_ast(node, filename: str) -> None:
-    """
-    Serialize the AST to a JSON file.
-    """
+    # Serialize the AST to a JSON file.
     with open(filename, 'w') as f:
         json.dump(ast_to_dict(node), f, indent=2)
 
 
 def visualize_ast(node, output_path: str = 'ast', format: str = 'png') -> str:
-    """
-    Create a Graphviz visualization of the AST.
-    Returns the path to the rendered file.
-    """
+    # Create a Graphviz visualization of the AST.
+    # Returns the path to the rendered file.
     graph = Digraph(comment='Regex AST', format=format)
 
     def recurse(n):
@@ -93,20 +86,21 @@ def visualize_ast(node, output_path: str = 'ast', format: str = 'png') -> str:
     return graph.render(output_path, cleanup=True)
 
 
+#
+#
+#
+#
 class ASTTracer:
-    """
-    Instrument AST nodes to record match() entry, exit, and successful matches.
-    Use duck typing to wrap match() methods.
-    """
+    # Instrument AST nodes to record match() entry, exit, and successful matches.
+    # Use duck typing to wrap match() methods.
 
     def __init__(self):
         self.trace = []
         self._orig_methods = {}
 
+    # TODO: we can do better
     def instrument(self, node):
-        """
-        Wrap `match` methods on the AST nodes to record tracing info.
-        """
+        # Wrap `match` methods on the AST nodes to record tracing info.
         # Only instrument once
         if node in self._orig_methods:
             return
@@ -132,15 +126,11 @@ class ASTTracer:
             self.instrument(child)
 
     def restore(self) -> None:
-        """
-        Restore original match methods.
-        """
+        # Restore original match methods.
         for node, orig in self._orig_methods.items():
             setattr(node, 'match', orig)
         self._orig_methods.clear()
 
     def get_trace(self) -> list:
-        """
-        Get the collected trace entries.
-        """
+        # Get the collected trace entries.
         return self.trace
